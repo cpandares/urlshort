@@ -10,7 +10,11 @@ class UrlShortener extends Model
     protected $table = 'url_shorteners';
 
     protected $fillable = [
+
         'to_url',
-        'url_key'        
+        'url_key',
+        'nsfw',
+        'visited'
+   
     ];
 }

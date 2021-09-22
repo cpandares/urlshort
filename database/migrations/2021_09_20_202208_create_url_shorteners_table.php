@@ -17,6 +17,8 @@ class CreateUrlShortenersTable extends Migration
             $table->id();
             $table->string('to_url');
             $table->string('url_key', 6);
+            $table->boolean('nfsw', 6);
+            $table->string('url_key', 6);
             $table->timestamps();
         });
     }

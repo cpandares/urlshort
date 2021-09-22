@@ -15,16 +15,20 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-$urlShort = UrlShortener::paginate(1);
-
-foreach ($urlShort as $url ) {
-    Route::redirect($url->url_key, $url->to_url,301)->name('redirection');
-}
+Route::get('/', 'App\Http\Controllers\UrlShortenerController@index')->name('home');
+Route::get('/most','App\Http\Controllers\UrlShortenerController@getMostShortenUrl');
+Route::get('/stats','App\Http\Controllers\UrlShortenerController@getViewShortPage')->name('stats');
 
 
-Route::get('/', 'App\Http\Controllers\UrlShortenerController@index');
-Route::post('/create', 'App\Http\Controllers\UrlShortenerController@generateUrlShort')->name('short');
+$urlShort = UrlShortener::orderBy('id','desc')->limit(1)->get();
+Route::redirect($urlShort[0]->url_key, $urlShort[0]->to_url,301)->name('redirection');
+    
+
+Route::group(['middleware' => ['cors']], function () {
+    Route::post('/create', 'App\Http\Controllers\UrlShortenerController@generateUrlShort')->name('short');
+});
+
+
 
 
 /* 

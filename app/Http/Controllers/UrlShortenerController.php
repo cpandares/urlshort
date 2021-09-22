@@ -30,7 +30,7 @@ class UrlShortenerController extends Controller
 
         ]);
 
-        if($validate->fails()){
+        if($validate->fails()){//valid url 
 
             $data = [
                 'status'=>'error',
@@ -40,20 +40,20 @@ class UrlShortenerController extends Controller
             ];
 
             Session::flash('error', __('URL NOT VALID')); 
-            return response()->json($data, $data['code']);
+            return response()->json($data, $data['code']); //Error response
         }
       
-        $ramdonKey = Str::random(6);
+        $ramdonKey = Str::random(6);//Max 6 characters for key url
 
         while (UrlShortener::where(['url_key' => $ramdonKey])->exists()) {
-            $ramdonKey = Str::random(6);
+            $ramdonKey = Str::random(6); //if exist key before, genereate other  
         }
 
-        $urlShort = UrlShortener::where(['to_url'=>$url ])->exists();
+        $urlShort = UrlShortener::where(['to_url'=>$url ])->exists(); // we check if url already short before
         
 
         if($urlShort){
-            $visits = UrlShortener::orderBy('id','desc')->limit(1)->get();
+            $visits = UrlShortener::orderBy('id','desc')->limit(1)->get(); //if exist we add 1 visited
 
             UrlShortener::create([
                 'to_url' => $url,
@@ -74,7 +74,14 @@ class UrlShortenerController extends Controller
         
 
 
-        $result = app()->make('url')->to($ramdonKey);
+        $result = app()->make('url')->to($ramdonKey);//create url with our domain and key_url
+
+        $ifIsNsfw = UrlShortener::where(['nsfw'=> 1])->get();
+
+        if( $ifIsNsfw[0]->nsfw){
+            return redirect('home')->with('nsfw', $result);
+        }
+       
 
         return redirect('home')->with('message', $result);
 

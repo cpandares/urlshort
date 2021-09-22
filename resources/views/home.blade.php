@@ -44,7 +44,9 @@
 
                         @endif
 
-                  
+                        @if(Session::has('nsfw'))
+                            <p class="mt-5 alert {{ Session::get('alert-class', 'alert-info') }}">{{ route('redirection') }}</p>
+                        @endif 
 
                         @if(Session::has('error'))
                             <p class="mt-5 alert {{ Session::get('alert-class', 'alert-danger') }}">Url Not valid</p>

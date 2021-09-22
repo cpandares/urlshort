@@ -32,13 +32,13 @@
             contentType: false,
             processData: false,
             success:function(data){
-                console.log(formData)
+               
                 location.reload();
 
             },
             error: function(jqXHR, text, error){
                 console.log(error)
-                location.reload();
+              
             }
         });
       });

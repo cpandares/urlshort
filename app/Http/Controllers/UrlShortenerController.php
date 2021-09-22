@@ -15,6 +15,7 @@ class UrlShortenerController extends Controller
     {
 
         return view('home');
+
     }
 
 
@@ -76,14 +77,18 @@ class UrlShortenerController extends Controller
 
         $result = app()->make('url')->to($ramdonKey);//create url with our domain and key_url
 
-        $ifIsNsfw = UrlShortener::where(['nsfw'=> 1])->get();
+        $ifIsNsfw = UrlShortener::orderBy('id','desc')->limit(1)->get();
 
-        if( $ifIsNsfw[0]->nsfw){
+       
+
+        if( $ifIsNsfw[0]->nsfw == 1){
             return redirect('home')->with('nsfw', $result);
+        }else{
+            return redirect('home')->with('message', $result);
         }
        
 
-        return redirect('home')->with('message', $result);
+      
 
     } 
 

@@ -14,7 +14,7 @@
     
         <div class="container mt-5">
            <div class="row">
-               <div class="col-md-6 card shadow-lg p-5">
+               <div class="col-md-10 card shadow-lg p-5">
 
                     <form  id="formShort" >
                     
@@ -45,7 +45,36 @@
                         @endif
 
                         @if(Session::has('nsfw'))
-                            <p class="mt-5 alert {{ Session::get('alert-class', 'alert-info') }}">{{ route('redirection') }}</p>
+                            <script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+                            <script>
+                               let timerInterval
+                                Swal.fire({
+                                    title: 'This url is not safe for work, please wait',
+                                    html: 'I will close in 10 seconds.',
+                                    timer: 10000,
+                                    timerProgressBar: true,
+                                    didOpen: () => {
+                                        Swal.showLoading()
+                                        const b = Swal.getHtmlContainer().querySelector('b')
+                                        timerInterval = setInterval(() => {
+                                        b.textContent = Swal.getTimerLeft()
+                                        }, 100)
+                                    },
+                                    willClose: () => {
+                                        clearInterval(timerInterval)
+                                    }
+                                    }).then((result) => {
+                                    /* Read more about handling dismissals below */
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        console.log('I was closed by the timer')
+                                    }
+                                })
+                            </script>
+
+                            <p class="mt-5 alert {{ Session::get('alert-class', 'alert-primary') }}">
+                                <a href="{{ route('redirection') }}" > {{ route('redirection') }} </a>                         
+
+                            </p>
                         @endif 
 
                         @if(Session::has('error'))

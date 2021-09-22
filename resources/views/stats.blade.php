@@ -12,7 +12,7 @@
                  
         </nav>
     
-       <div class="container mt-5 shadow-lg p-5">
+       <div class="container mt-5 shadow-lg p-1 card">
 
             <table class="table">
                 <thead class="thead-dark">

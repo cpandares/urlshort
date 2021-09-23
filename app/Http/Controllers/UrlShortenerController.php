@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\UrlShortener;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -54,37 +55,46 @@ class UrlShortenerController extends Controller
         
 
         if($urlShort){
-            $visits = UrlShortener::orderBy('id','desc')->limit(1)->get(); //if exist we add 1 visited
+            $visits = UrlShortener::where(['to_url'=>$url ])->limit(1)->get(); //if exist we add 1 visited
 
-            UrlShortener::create([
+            $save =  UrlShortener::create([
                 'to_url' => $url,
                 'url_key' => $ramdonKey,
                 'nsfw' => $nsfw,
                 'visited' => $visits[0]->visited + 1 
+                
             ]); 
 
+            $data = [
+                'status'=>'error',
+                'code'=>200,              
+                'url'=>$save
+            ];
+
         }else{
-              UrlShortener::create([
+           $save =  UrlShortener::create([
                 'to_url' => $url,
                 'url_key' => $ramdonKey,
                 'nsfw' => $nsfw,
                 'visited' => 1
             ]); 
-        }
 
-        
-
+            $data = [
+                'status'=>'error',
+                'code'=>200,              
+                'url'=>$save
+            ];
+        }     
 
         $result = app()->make('url')->to($ramdonKey);//create url with our domain and key_url
+        $ifIsNsfw = UrlShortener::orderBy('id','desc')->limit(1)->get();       
 
-        $ifIsNsfw = UrlShortener::orderBy('id','desc')->limit(1)->get();
-
-       
-
-        if( $ifIsNsfw[0]->nsfw == 1){
-            return redirect('home')->with('nsfw', $result);
+        if($ifIsNsfw[0]->nsfw == 1){
+            Session::flash('nsfw'); 
+            return response()->json($result, $data['code']);
         }else{
-            return redirect('home')->with('message', $result);
+            Session::flash('message'); 
+            return response()->json($result, $data['code']);
         }
        
 
@@ -97,9 +107,9 @@ class UrlShortenerController extends Controller
     public function getViewShortPage(){
         
         $visits = UrlShortener::orderBy('visited','desc')->limit(100)->paginate(5);
-        
-    
-           return view('stats', compact('visits'));
+      
+
+        return view('stats', compact('visits'));
     
         }
 

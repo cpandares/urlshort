@@ -52,7 +52,10 @@
                                     title: 'This url is not safe for work, please wait',
                                     html: 'I will close in 10 seconds.',
                                     timer: 10000,
+                                    showCancelButton: true,                                  
                                     timerProgressBar: true,
+                                    showCancelButton: true,
+                                    allowOutsideClick: true,
                                     didOpen: () => {
                                         Swal.showLoading()
                                         const b = Swal.getHtmlContainer().querySelector('b')
@@ -65,10 +68,10 @@
                                     }
                                     }).then((result) => {
                                     /* Read more about handling dismissals below */
-                                    if (result.dismiss === Swal.DismissReason.timer) {
-                                        console.log('I was closed by the timer')
+                                    if (result.dismiss === Swal.DismissReason.cancel) {
+                                       location.reload()
                                     }
-                                })
+                                    })
                             </script>
 
                             <p class="mt-5 alert {{ Session::get('alert-class', 'alert-primary') }}">
